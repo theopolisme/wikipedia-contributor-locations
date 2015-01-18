@@ -1,0 +1,13 @@
+Flask==0.10.1
+Flask-Assets==0.10
+itsdangerous==0.24
+Jinja2==2.7.3
+MarkupSafe==0.23
+mwclient==0.7.1
+python-geoip==1.2
+python-geoip-geolite2==2014.207
+redis==2.10.3
+requests==2.5.1
+six==1.9.0
+Werkzeug==0.9.6
+flup==1.0.3.dev-20110405

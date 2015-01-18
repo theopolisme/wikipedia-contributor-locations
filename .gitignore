@@ -1,0 +1,4 @@
+venv/
+*.pyc
+app/static/.webassets-cache
+app/static/gen/packed.js

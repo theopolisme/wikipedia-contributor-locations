@@ -1,0 +1,67 @@
+<head>
+    <title>Wikipedia Article Contributor Locations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/css/tooltipster.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/mw.ui.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body>
+    <div id="titleBar" class="title-bar">
+        <span id="titles" title="Click an article title to toggle its visibility on the map."></span>
+    </div>
+
+    <div id="overlay" class="wrapper">
+        <div id="main" class="popup">
+            <h1>Wikipedia Article Contributor Locations</h1>
+            <p>Enter the titles of Wikipedia articles to view a map of the locations of each edit.*</p>
+            <p>
+                <form class="mw-ui-vform">
+                    <div class="mw-ui-vform-field">
+                        <input class="mw-ui-input title-input" type="text" placeholder="Article title (e.g. Apple)" placeholder-next="Another article title (optional)" required></input>
+                    </div>
+                    <div class="mw-ui-vform-field">
+                        <input class="mw-ui-input" type="text" id="baseUrl" placeholder="Base domain (e.g. en.wikipedia.org)" value="en.wikipedia.org" required></input>
+                    </div>
+                    <div class="mw-ui-vform-field">
+                        <input class="mw-ui-button mw-ui-progressive" type="submit" value="Map it"></input>
+                    </div>
+                </form>
+            </p>
+            <p><small>*The IP addresses of registered editors are hidden in the system, preventing geolocation, so only unregistered contributions will be mapped. A tool by <a href="https://theopolis.me">@theopolisme</a>, made in 2015 in Memphis, Tennessee.</small></p>
+        </div>
+
+        <div id="processing" class="popup">
+            <p><span id="message"></span> (<span id="elapsed"></span>s&nbsp;elapsed)...</p>
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+            <p><a href="#!/main">Reset &amp; back to main</a></p>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/js/jquery.tooltipster.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+
+    <!-- Google Analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-55418641-5', 'auto');
+    </script>
+
+    <script>
+        LOCATIONS_ENDPOINT = "{{ url_for('locations') }}";
+    </script>
+    {% assets filters="rjsmin", output="gen/packed.js", "lib/simpleheat.js", "lib/leaflet.heat.js", "lib/rlite.min.js", "lib/randomcolor.min.js", "main.js" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+</body>
