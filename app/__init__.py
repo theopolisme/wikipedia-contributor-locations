@@ -7,6 +7,7 @@ from werkzeug.contrib.cache import SimpleCache, RedisCache
 from flask import Flask, render_template, jsonify, request
 from flask.ext.assets import Environment
 
+import requests
 from lookup import get_locations
 
 CACHE_PREFIX = 'rzTOb6828NtZ5/9vVkxhGd+3CivIBDQLfQPQBrT7WW8='
@@ -19,6 +20,7 @@ if os.environ.get('IS_PRODUCTION'):
     cache = RedisCache(host='tools-redis', port=6379, default_timeout=CACHE_TIMEOUT, key_prefix=CACHE_PREFIX)
 else:
     cache = SimpleCache()
+    assets.debug = True
 
 # Modified from http://flask.pocoo.org/docs/0.10/patterns/viewdecorators/#caching-decorator
 def cached(timeout=CACHE_TIMEOUT, key='view/{path}/{args}'):
@@ -73,6 +75,21 @@ def locations():
         success=True,
         locations=locations,
         elapsed=time.time() - start_time
+    )
+
+@app.route('/suggest', methods=['GET'])
+@cached()
+def suggest():
+    result = requests.get('https://' + request.args['base_url'] + '/w/api.php', params={
+        'action': 'opensearch',
+        'search': request.args['search'],
+        'namespace': '0',
+        'limit': '10'
+    }).json()
+
+    return jsonify(
+        search=result[0],
+        results=result[1]
     )
 
 if __name__ == "__main__":

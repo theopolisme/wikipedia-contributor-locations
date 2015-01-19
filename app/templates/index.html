@@ -3,6 +3,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/css/tooltipster.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='lib/mw.ui.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 </head>
@@ -18,7 +19,8 @@
             <p>
                 <form class="mw-ui-vform">
                     <div class="mw-ui-vform-field">
-                        <input class="mw-ui-input title-input" type="text" placeholder="Article title (e.g. Apple)" placeholder-next="Another article title (optional)" required></input>
+                        <input type="hidden" class="select2-offscreen" id="titlesInputHidden" value="" />
+                        <input type="text" class="hidden" id="titlesInput" value="" placeholder="Begin entering article titles to visualize..."/>
                     </div>
                     <div class="mw-ui-vform-field">
                         <input class="mw-ui-input" type="text" id="baseUrl" placeholder="Base domain (e.g. en.wikipedia.org)" value="en.wikipedia.org" required></input>
@@ -38,7 +40,7 @@
                 <div class="bounce2"></div>
                 <div class="bounce3"></div>
             </div>
-            <p><a href="#!/main">Reset &amp; back to main</a></p>
+            <p><a href="#!/main" class="mw-ui-button mw-ui-progressive mw-ui-quiet">Reset &amp; back to main</a></p>
         </div>
     </div>
 
@@ -48,6 +50,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.6/nprogress.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/js/jquery.tooltipster.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.5.2/select2.min.js"></script>
 
     <!-- Google Analytics -->
     <script>
@@ -60,6 +63,7 @@
 
     <script>
         LOCATIONS_ENDPOINT = "{{ url_for('locations') }}";
+        SUGGEST_ENDPOINT = "{{ url_for('suggest') }}";
     </script>
     {% assets filters="rjsmin", output="gen/packed.js", "lib/simpleheat.js", "lib/leaflet.heat.js", "lib/rlite.min.js", "lib/randomcolor.min.js", "main.js" %}
     <script type="text/javascript" src="{{ ASSET_URL }}"></script>

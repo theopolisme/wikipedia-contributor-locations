@@ -177,46 +177,45 @@
     }
 
     function setUpTitleInput () {
-        var $originalInput = $( '.title-input' ).clone();
-
-        $originalInput
-            .removeAttr( 'required' )
-            .attr( 'placeholder', $originalInput.attr( 'placeholder-next' ) );
-
-        function removeIfNotLastAndEmpty () {
-            var $this = $( this );
-            if ( $this.val() === '' && !$this.is( $( '.title-input:last' ) ) ) {
-                $this.slideUp( function () {
-                    $( this ).remove()
-                } );
-            }
-        }
-
-        function addTitleInput () {
-            $originalInput.clone()
-                .one( 'keyup', addTitleInput )
-                .on( 'focusout', removeIfNotLastAndEmpty )
-                .hide()
-                .insertAfter( '.title-input:last' )
-                .slideDown();
-        }
-
-        $( '.title-input' ).one( 'keyup', function () {
-            addTitleInput();
+        $( '#titlesInput' ).select2( {
+            multiple: true,
+            minimumInputLength: 1,
+            formatInputTooShort: 'Please enter 1 or more characters',
+            ajax: {
+                url: SUGGEST_ENDPOINT,
+                type: 'GET',
+                dataType: 'json',
+                delay: 250,
+                data: function ( term ) {
+                    return {
+                        base_url: $( '#baseUrl' ).val(),
+                        search: term
+                    }
+                },
+                results: function ( data ) {
+                    return {
+                        results: data.results.map( function ( v ) {
+                            return { id: v, text: v };
+                        } )
+                    }
+                },
+                cache: true,
+                minimumInputLength: 1
+            },
+            width: '290px'
         } );
     }
 
     function setUpFormSubmitHandler () {
         $( 'form' ).submit( function ( e ) {
-            var titles = [],
+            var titleVal = $( '#titlesInput' ).val(),
+                titles = titleVal ? titleVal.split( ',' ) : [],
                 baseUrl = $( '#baseUrl' ).val();
 
-                $( '.title-input' ).each( function () {
-                    var val = $( this ).val();
-                    if ( val ) {
-                        titles.push( val );
-                    }
-                } )
+            if ( !titles.length ) {
+                $( '#s2id_autogen1' ).focus();
+                return false;
+            }
 
             window.location.hash = '#!/map/' + baseUrl + '/' + encodeURIComponent( titles.join( '&&' ) );
             return false;
